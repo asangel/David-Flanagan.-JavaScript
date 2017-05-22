@@ -1,0 +1,163 @@
+﻿<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+
+    <style>   /* Таблица стилей CSS: определяет внешний вид вывода программы */
+    .output {
+        font-weight: bold;
+    }
+
+    /* Жирный шрифт для вычисленных значений */
+    #payment {
+        text-decoration: underline;
+    }
+
+    /* Для элементов с id="payment" */
+    #graph {
+        border: solid black 1px;
+    }
+
+    /* Простая рамка для диаграммы */
+    th, td {
+        vertical-align: top;
+    }
+
+    table, tr, th, td {
+        /*border: 1px solid blue;*/
+    }
+
+    /* Выравнивание в ячейках таблицы */
+    </style>
+
+
+</head>
+<body>
+
+<table>
+    <tr>
+        <th>Enter Loan Data:</th>
+        <td></td>
+    </tr>
+    <tr>
+        <td>Amount of the loan/сумма кредита ($):</td>
+        <td><input id="amount" onchange="calculate();"></td>
+    </tr>
+    <tr>
+        <td>Annual interest/Годовая процентная(%):</td>
+        <td><input id="apr" onchange="calculate();"></td>
+    </tr>
+    <tr>
+        <td>Repayment period (years)/Период погашения:</td>
+        <td><input id="years" onchange="calculate();"></td>
+    <tr>
+        <th>Approximate Payments/Приблизительные расчеты :</th>
+        <td>
+            <button onclick="calculate();">Calculate</button>
+        </td>
+    </tr>
+
+    <!--расчитанные показатели-->
+
+    <tr>
+        <td>Monthly payment/Ежемесячный платеж:</td>
+        <td>$<span class="output" id="payment"></span></td>
+    </tr>
+    <tr>
+        <td>Total payment/Общая сумма платежа:</td>
+        <td>$<span class="output" id="total"></span></td>
+    </tr>
+    <tr>
+        <td>Total interest/общая сумма процентов:</td>
+        <td>$<span class="output" id="totalinterest"></span></td>
+    </tr>
+
+</table>
+
+<script>
+
+    "use strict"; // Использовать строгий режим ECMAScript 5, если броузер поддерживает его
+    /*
+     * Этот сценарий определяет функцию calculate(), вызываемую обработчиками событий
+     * в разметке HTML выше. Функция читает значения из элементов <input>, вычисляет размеры
+     * платежей по ссуде, отображает результаты в элементах <span>. Кроме того, она сохраняет
+     * пользовательские данные, отображает ссылки на кредитные учреждения и рисует диаграмму.
+     */
+
+    function calculate() {
+        // Отыскать элементы ввода и вывода в документе
+        var amount  = document.getElementById("amount");  //  ввод сумма кредита
+        var apr     = document.getElementById("apr");     //  ввод процентная ставка
+        var years   = document.getElementById("years");   //  ввод кол-во лет кредита
+        var payment = document.getElementById("payment"); //  ввод ежемесячный платеж
+        var total   = document.getElementById("total");   //  ввод общий платеж (итого)
+        var totalinterest = document.getElementById("totalinterest"); // общая сумма процентов
+
+
+        // Получить ввод пользователя из элементов ввода. Предполагается, что все данные
+        // являются корректными. Преобразовать процентную ставку из процентов
+        // в десятичное число и преобразовать годовую ставку в месячную ставку.
+        // Преобразовать период платежей в годах в количество месячных платежей.
+        var principal = parseFloat(amount.value);         // сумма кредита (asangel)
+        var interest = parseFloat(apr.value) / 100 / 12;  // процентная ставка(%) / 100(%) / 12(мес.)
+        var payments = parseFloat(years.value) * 12;      // кол-во месяцев кредита
+
+        // Теперь вычислить сумму ежемесячного платежа.
+        var x = Math.pow(1 + interest, payments); // Math.pow() вычисляет степень
+        //alert('1.001^24 = ' + x) //  1.2697 , for degug
+        var monthly = (principal * x * interest) / (x - 1);
+        // Если результатом является конечное число, следовательно, пользователь
+        // указал корректные данные и результаты можно отобразить
+        if (isFinite(monthly)) {
+            // Заполнить поля вывода, округлив результаты до 2 десятичных знаков
+            payment.innerHTML = monthly.toFixed(2);
+            total.innerHTML = (monthly * payments).toFixed(2);
+            totalinterest.innerHTML = ((monthly * payments) - principal).toFixed(2);
+            // Сохранить ввод пользователя, чтобы можно было восстановить данные
+            // при следующем открытии страницы
+            save(amount.value, apr.value, years.value);
+
+            try { // Перехватывать все ошибки, возникающие в этих фигурных скобках
+
+            }
+            catch (e) { /* И игнорировать эти ошибки */
+            }
+
+        }
+        else {
+            // Результат не является числом или имеет бесконечное значение,
+            // что означает, что были получены неполные или некорректные данные.
+            // Очистить все результаты, выведенные ранее.
+            payment.innerHTML = ""; // Стереть содержимое этих элементов
+            total.innerHTML = "";
+            totalinterest.innerHTML = "";
+        }
+    }
+    // Сохранить ввод пользователя в свойствах объекта localStorage. Значения этих свойств
+    // будут доступны при повторном посещении страницы. В некоторых броузерах (например,
+    // в Firetox) возможность сохранения не поддерживается, если страница открывается
+    // с адресом URL вида file://. Однако она поддерживается при открытии страницы через HTTP.
+    function save(amount, apr, years) {
+        if (window.localStorage) { // Выполнить сохранение, если поддерживается
+            localStorage.loan_amount = amount;
+            localStorage.loan_apr = apr;
+            localStorage.loan_years = years;
+        }
+    }
+
+    // Автоматически восстановить поля ввода при загрузке документа.
+    window.onload = function () {
+        // Если броузер поддерживает localStorage и имеются сохраненные данные
+        if (window.localStorage && localStorage.loan_amount) {
+            document.getElementById("amount").value = localStorage.loan_amount;
+            document.getElementById("apr").value = localStorage.loan_apr;
+            document.getElementById("years").value = localStorage.loan_years;
+        }
+    };
+
+</script>
+
+</body>
+</html>
+
+
