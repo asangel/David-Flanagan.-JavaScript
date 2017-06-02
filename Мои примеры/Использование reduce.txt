@@ -1,0 +1,37 @@
+
+var a = [ {a: 10, b: 20}, {a: 15, z: 30}, {b: 25, y: 1}  ]
+
+function reduceArray(a) {
+
+
+    try {
+
+      var result =   a.reduce(function (o1, o2) {
+
+            if ( typeof  o1 != 'object' || typeof o2 != 'object' ) throw reduceArray.break;
+
+            for (var prop in o2) {
+                o1[prop] = o2[prop];
+            }
+
+            return o1;
+
+        } ,  {} );
+
+        return result;
+
+    } catch (e) {
+
+        if (e == reduceArray.break) return {};
+
+        throw e;
+
+    }
+}
+
+reduceArray.break = new Error("NotObject");
+
+var r = reduceArray(a);
+
+
+console.dir(r);
