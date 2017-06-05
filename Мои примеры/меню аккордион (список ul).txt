@@ -1,0 +1,135 @@
+﻿<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+
+    <style>
+
+        .accordion ul , .accordion li{
+            list-style: none;
+            /*display: inline-block;*/
+            padding: 0px;
+            width: 250px;
+            margin: 0px;
+            /*border-radius: 15px;*/
+        }
+
+        .accordion li p{
+            border-radius: 15px;
+            border: 1px solid;
+            margin: 2px;
+        }
+
+        .accordion li.accordion-menu p{
+            background-color: lightcoral;
+        }
+
+        .accordion li.accordion-submenu p{
+            background-color: yellow;
+        }
+
+        .accordion ul{
+            /*border: 1px solid;*/
+            /*background-color: yellow;*/
+        }
+
+        .accordion ul li>p{
+            display: inline-block;
+            width: 100%;
+            padding: 5px;
+            padding-left: 20px;
+        }
+
+        .hidden{
+            display: none;
+        }
+
+    </style>
+
+
+</head>
+<body>
+
+<div class="accordion">
+    <ul>
+        <li class="accordion-menu "><p>PHP</p>
+            <ul class="hidden">
+                <li class="accordion-submenu">
+                    <p> Его основными преумуществами являются: простой синтаксис, высокое быстродействие,
+                        поддержка большинством хостингов. Очень весомым преумуществом является то, что на
+                        PHP написаны многие популярные движки (например, самый популярный движок для
+                        stand alone блогов – WordPress)
+                    </p>
+
+                </li>
+
+            </ul>
+        </li>
+
+        <li class="accordion-menu"><p>Java Script</p>
+            <ul class="hidden">
+                <li class="accordion-submenu">
+                    <p> JavaScript – язык, исполняемый на стороне браузера (клиента).
+                        Код данного языка содержится непосредственно в html-коде страниц,
+                        либо во внешних подключаемых файлах с расширением .js.
+                    </p>
+                </li>
+            </ul>
+        </li>
+
+        <li class="accordion-menu"><p>Perl</p>
+            <ul class="hidden">
+                <li class="accordion-submenu">
+                    <p> Perl – еще один популярный язык веб-программирования, который, правда,
+                        реже используется при создании веб-приложений. Данный язык был создан
+                        Ларри Уоллом в 1987 году, а само название расшифровывается как Practical
+                        Extraction and Report Language , что означает «практический язык для
+                        извлечения данных и составления отчётов».
+                    </p>
+                </li>
+            </ul>
+        </li>
+
+    </ul>
+
+</div>
+
+<script>
+
+    var accordion = document.querySelector('.accordion');
+    accordion.onclick = function (evt) {
+
+        var target = evt.target;
+
+        if(!target.closest('div.accordion')) return;
+
+        var li = target.closest('li');
+
+        if(!li.classList.contains('accordion-menu')) return;
+
+        var  subUl = li.querySelector('ul');
+        if(!subUl) return;
+
+        // скроем все открытые меню
+        // Сделаем выборку по всем UL, содержащим субменю:
+        var UlCollections = accordion.querySelectorAll('div.accordion li.accordion-menu>ul');
+        for(var i=0; i<UlCollections.length; i++){
+            var ul = UlCollections[i];
+            //if (ul.compareDocumentPosition(subUl) & 20 ) //continue;
+            if(ul==subUl) continue;
+            if(ul.classList.contains('hidden')) continue;
+            ul.classList.add('hidden');
+        }
+
+        subUl.classList.toggle('hidden');
+
+
+    }
+
+
+</script>
+
+
+</body>
+</html>
+
