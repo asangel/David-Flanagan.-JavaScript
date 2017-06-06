@@ -17,11 +17,12 @@ var reduce = function(a, f, initial) { // Этот алгоритм взят и�
     // Теперь вызвать f для каждого оставшегося элемента массива
     while(i < len) {
         if (i in a)
-            accurrulator = f.call(undefined, accurrulator, a[i], i, a);
+            accumulator = f.call(undefined, accumulator, a[i], i, a);
         i++;
     }
-    return accurulator;
+    return accumulator;
 };
+
 
 // Использование reduce:
 var data = [1,1,3,5,5];
@@ -33,3 +34,48 @@ var stddev = Math.sqrt(reduce(map(deviations, square), sum)/(data.length-1));
 
 
 
+//----------------------мой вариант---------------------
+
+
+var reduce  = function (array, callback, initialize) {
+
+    if(arguments.length<2) throw TypeError('less then 2 args');
+
+    var accumulator;
+
+    if(arguments.length>2) {
+        accumulator = initialize;
+    } else {
+
+        var index;
+        for(index=0, length=array.length; index<length; index++){
+            if(index in array){
+                //console.log('first value: ' + array[index])
+                accumulator = array[index];
+                index++;
+                break;
+            }
+        }
+
+        if(index==array.length) throw  TypeError('Массив пустой!');
+
+    }
+
+   // console.log(index)
+    for( ; index<array.length; index++){
+        //console.dir(array[index])
+        //console.dir(index)
+        accumulator = callback.call(null, accumulator, array[index]);
+    }
+
+    return accumulator;
+
+
+}
+
+
+var result = reduce([2,3,4,5], function (x,y) { //2,4,6,8,10,12
+    return x+y;
+} );
+
+console.dir('Итого: ' + result);
