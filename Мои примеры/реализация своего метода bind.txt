@@ -1,0 +1,37 @@
+﻿function Car(model, year) {
+
+    this.model = model;
+    this.year = year;
+
+}
+
+
+function bind(context, f) {
+
+    //if(arguments.length<2) throw TypeError('Not enough arguments');
+    if('function' !== typeof arguments[1] ) throw TypeError('missing  argument 2');
+
+    // Начинаем аргумента с индексом 2
+    // 1-й аргумент-контекст вызова, 2-й функция, далее пользовательскте аргументв
+    var outArgs = Array.prototype.slice.call(arguments, 2);
+    var self =  arguments[0];
+
+    return function () {
+        f.apply(self, outArgs);
+    }
+}
+
+function getModelInfo() {
+
+    console.dir(this.model + ', ' + this.year);
+
+}
+
+var car = new Car('Lada', 1990);
+var car2 = new Car('Niva', 2000);
+
+var f =  bind(null,  bind( undefined , bind(car, getModelInfo) ) );
+var f2 = bind(car2, getModelInfo);
+
+f();
+f2();
