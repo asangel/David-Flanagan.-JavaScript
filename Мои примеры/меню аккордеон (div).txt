@@ -1,0 +1,175 @@
+﻿<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+
+</head>
+<body>
+
+<h1> Меню аккордеон</h1>
+
+<style>
+
+    .accord div{
+
+        width: 300px;
+        border-radius: 30px;
+        padding: 3px;
+        padding-left: 20px;
+        margin-bottom: 0px;
+        box-sizing: border-box;
+    }
+
+    .accord div.accord-menu{
+
+        background-color: lightsalmon;
+        float: left;
+        margin-bottom: 0px;
+        min-height: 40px;
+        position: relative;
+        padding-top: 5px;
+
+    }
+
+
+    .accord  div.accord-submenu{
+        /*border: 1px solid blue;*/
+        background-color: #dddddd;
+    }
+
+    .hidden{
+
+        display: none;
+    }
+
+
+    .empty{
+        margin: 0px;
+        padding: 0px;
+    }
+
+    /*.accord .accord-submenu:after{*/
+        /*content: '    ';*/
+        /*clear: left;*/
+    /*}*/
+
+    .accord div.accord-menu:nth-child(2n){
+        background-color: grey;
+    }
+
+    .selected{
+
+    }
+
+    .accord-menu:after{
+        content: ' ▼ ';
+        color: white;
+        position: absolute;
+        right: 20px;
+    }
+
+
+</style>
+
+
+<div class="accord">
+
+   <div class="accord-menu"> Java script </div>
+    <div class="accord-submenu hidden">
+        <p>
+            JavaScript – язык, исполняемый на стороне браузера (клиента). Код данного языка содержится непосредственно
+            в html-коде страниц, либо во внешних подключаемых файлах с расширением .js.
+
+            На основе JavaScript появились и активно развиваются js-фреймворки, которые обеспечивают
+            кросс-браузерность методов и функций, а также ускоряют и упрощают сам процесс разработки.
+            Один из популярных js-фреймворков – jQuery.
+        </p>
+    </div>
+    <div class="empty" style="width: 100%; clear: both"></div>
+
+    <div class="accord-menu"> PHP </div>
+    <div class="accord-submenu hidden">
+        <p>
+            PHP является серверным языком программирования и осуществляет связь сайта с сервером и его базой данных.
+            Сам по себе язык PHP за создание сайта не отвечает, и если взглянуть на код страницы такого ресурса,
+            мы увидим все тот же HTML, только с вкраплениями PHP кода.
+
+            В сайтах на PHP часть кода, написанная на HTML, отвечает за внешний вид и вывод информации, а PHP в с
+            вою очередь за динамику и интерактивность функционала. Благодаря своей простоте, гибкости и скорости
+            выполнения операций, язык PHP является одним из самых популярных стандартов, в веб-разработке.
+            Подробнее: http://hinex.ru/yazyki-programmirovania-web-saitov.php
+        </p>
+
+    </div>
+    <div class="empty" style="width: 100%; clear: both"></div>
+
+    <div class="accord-menu"> HTML  </div>
+    <div class="accord-submenu hidden">
+        <p>
+            HTML - это один из самых старых языков web-программирования, появившийся еще на заре развития Интернета,
+            и зарекомендовавший себя как один из самых простых и надежных способов web-программирования. HTML
+            расшифровывается как Hyper Text Markup Language – Язык Разметки Гипертекста. Сайты, созданные по технологии
+            HTML в большинстве своем являются набором статических страниц, не требующих наличия базы данных.
+
+            Технология HTML может подойти для создания небольших, легких сайтов в несколько страничек,
+            функционал которых не требует интерактивности и динамики.
+            Подробнее: http://hinex.ru/yazyki-programmirovania-web-saitov.php
+
+        </p>
+    </div>
+    <div class="empty" style="width: 100%; clear: both"></div>
+
+    <div class="accord-menu"> Perl  </div>
+    <div class="accord-submenu hidden">
+        <p>
+            Perl (Practical Extraction and Report Languge) - универсальный, интерпретируемый язык web-программирования,
+            используемый для написания cgi-скриптов и cgi-программ, выполняемых на стороне сервера и позволяющих
+            автоматизировать работу сайта. Perl - это одна из наиболее удобных и распространённых сред для
+            создания динамических web-страниц, хотя и вытесняемое в последнее время более новыми Интернет-технологиями.
+            Формат Perl является прекрасным средством для взаимодействия с web-серверами через CGI (общий интерфейс
+            взаимодействия). В настоящее время язык Perl теряет позиции по отношению к своему функциональному
+            аналогу - PHP.
+            Подробнее: http://hinex.ru/yazyki-programmirovania-web-saitov.php
+
+        </p>
+    </div>
+    <div class="empty" style="width: 100%; clear: both"></div>
+
+
+</div>
+
+<script>
+
+    var accord = document.querySelector('.accord');
+    //alert(accord)
+    accord.onclick = function (evt) {
+
+        var target = evt.target;
+        if(!target.classList.contains('accord-menu')) return;
+
+        var submenu = target.nextElementSibling;
+        if(!submenu.classList.contains('accord-submenu')) return;
+
+        // закроем все субменю
+        var divCollection = accord.querySelectorAll('div.accord div.accord-submenu');
+        for(var i=0; i<divCollection.length; i++){
+            if(divCollection[i] == submenu) continue;
+
+            if(!divCollection[i].classList.contains('hidden')) {
+                divCollection[i].classList.add('hidden');
+            }
+
+        }
+
+
+        submenu.classList.toggle('hidden');
+
+    }
+
+
+</script>
+
+
+
+</body>
+</html>    
