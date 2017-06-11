@@ -1,0 +1,77 @@
+﻿
+function Set() { // Это конструктор
+    this.values = {}; // Свойства этого объекта составляют множество 
+    this.n = 0; // Количество значений в множестве
+    this.add.apply(this, arguments); // Все аргументы являются значениями,
+} // добавляемыми в множество
+// Добавляет все аргументы в множество. 
+Set.prototype.add = function() {
+    for(var i = 0; i < arguments.length; i++) { // Для каждого аргумента 
+        var val = arguments[i];  // Добавляемое значение
+        var str = Set._v2s(val); // Преобразовать в строку
+        if (!this.values.hasOwnProperty(str)) { // Если отсутствует в множ. 
+            this.values[str] = val; // Отобразить строку в знач.
+            this.n++;               // Увеличить размер множества
+        }
+    }
+    return this; // Для поддержки цепочек вызовов методов
+};
+// Удаляет все аргументы из множества. 
+Set.prototype.remove = function() {
+    for(var i = 0; i < arguments.length; i++) { // Для каждого аргумента 
+        var str = Set._v2s(arguments[i]);       // Отобразить в строку
+        if (this.values.hasOwnProperty(str)) {  // Если присутствует в множ. 
+            delete this.values[str]; // Удалить
+            this.n--; // Уменьшить размер множества
+        }
+    }
+    return this; // Для поддержки цепочек вызовов методов
+};
+
+// Возвращает true, если множество содержит value; иначе возвращает false. 
+Set.prototype.contains = function(value) {
+    return this.values.hasOwnProperty(Set._v2s(value));
+};
+
+// Возвращает размер множества.
+Set.prototype.size = function() { return this.n; };
+
+// Вызывает функцию f в указанном контексте для каждого элемента множества. 
+Set.prototype.foreach = function(f, context) {
+    for(var s in this.values) // Для каждой строки в множестве
+        if (this.values.hasOwnProperty(s)) // Пропустить унаследов. свойства
+            f.call(context, this.values[s]); // Вызвать f для значения
+};
+
+// Функция для внутреннего использования. Отображает любые значения JavaScript 
+// в уникальные строки. 
+Set._v2s = function(val) {
+    switch(val) {
+        case undefined: return 'u'; // Специальные простые значения
+        case null:  return 'n';     // отображаются в односимвольные строки.
+        case true:  return 't';
+        case false: return 'f';
+        default: switch(typeof val) {
+            case 'number': return '#' + val;  // Числа получают префикс #.
+            case 'string': return '"' + val;  // Строки получают префикс ".
+            default: return '@' + objectId(val); // Объекты и функции - @
+        }
+    }
+// Для любого объекта возвращается строка. Для разных объектов эта функция
+// будет возвращать разные строки, а для одного и того же объекта всегда
+// будет возвращать одну и ту же строку. Для этого в объекте o создается свойство.
+// В ES5 это свойство можно сделать неперечислимым и доступным только для чтения.
+    function objectId(o) {
+        var prop = "|**objectid**|";  // Имя частного идентификац. свойства 
+        if (!o.hasOwnProperty(prop))  // Если объект не имеет этого свойства 
+            o[prop] = Set._v2s.next++; // Присвоить ему след. доступ. значение 
+        return o[prop];               // Вернуть идентификатор
+    }
+};
+Set._v2s.next = 100; // Начальное значение для идентификаторов объектов.
+
+
+
+
+
+

@@ -1,0 +1,67 @@
+﻿// Определение класса для представления игральной карты 
+function Card(suit, rank) {
+    this.suit = suit;  // Каждая карта имеет масть
+    this.rank = rank;  // и значение
+}
+
+// Следующие типы перечисления определяют возможные масти и значения карт 
+Card.Suit = enumeration({Clubs: 1, Diamonds: 2, Hearts:3, Spades:4});
+Card.Rank = enumeration({Two: 2, Three: 3, Four: 4, Five: 5,
+    Six: 6, Seven: 7, Eight: 8, Nine: 9, Ten: 10,
+    Jack: 11, Queen: 12, King: 13, Ace: 14});
+
+// Определение текстового представления карты
+Card.prototype.toString = function() {
+    return this.rank.toString() + " " + this.suit.toString();
+};
+
+// Сравнивает значения двух карт в соответствии с правилами игры в покер 
+
+Card.prototype.compareTo = function(that) {
+    if (this.rank < that.rank) return -1;
+    if (this.rank > that.rank) return 1;
+    return 0;
+};
+
+// Функция упорядочения карт в соответствии с правилами игры в покер 
+Card.orderByRank = function(a,b) { return a.compareTo(b); };
+
+// Функция упорядочения карт в соответствии с правилами игры в бридж 
+Card.orderBySuit = function(a,b) {
+    if (a.suit < b.suit) return -1;
+    if (a.suit > b.suit) return 1;
+    if (a.rank < b.rank) return -1;
+    if (a.rank > b.rank) return 1;
+    return 0;
+};
+
+// Определение класса представления стандартной колоды карт
+function Deck() {
+    var cards = this.cards = [];     // Колода - просто массив карт
+    Card.Suit.foreach(function(s) {  // Инициализировать массив 
+        Card.Rank.foreach(function(r) {
+            cards.push(new Card(s,r));
+        });
+    });
+}
+
+// Метод перемешивания: тасует колоду карт и возвращает ее 
+Deck.prototype.shuffle = function() {
+// Для каждого элемента массива: поменять местами
+// со случайно выбранным элементом ниже
+    var deck = this.cards, len = deck.length;
+    for(var i = len-1; i > 0; i--) {
+        var r = Math.floor(Math.random()*(i+1)), temp; // Случайное число
+        temp = deck[i], deck[i] = deck[r], deck[r] = temp; // Поменять
+    }
+    return this;
+};
+
+// Метод раздачи: возвращает массив карт
+Deck.prototype.deal = function(n) {
+    if (this.cards.length < n) throw "Карт для выдачи не хватает";
+    return this.cards.splice(this.cards.length-n, n);
+};
+// Создает новую колоду карт, тасует ее и раздает как в игре в бридж
+var deck = (new Deck()).shuffle();
+var hand = deck.deal(13).sort(Card.orderBySuit);

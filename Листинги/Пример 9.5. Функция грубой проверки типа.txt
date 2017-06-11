@@ -1,0 +1,26 @@
+﻿
+
+// Возвращает true, если o реализует методы, определяемые последующими аргументами. 
+function quacks(o /*,  ... */) {
+    for(var i=1; i<arguments.length; i++) { // для каждого аргумента после o
+        var arg = arguments[i];
+        switch(typeof arg) { // Если arg это:
+            case 'string':   // строка: проверить наличие метода с этим именем
+                if (typeof o[arg] !== "function") return false; 
+                continue;
+            case 'function':  // функция: использовать объект-прототип
+                // Если аргумент является функцией, использовать ее прототип 
+                arg = arg.prototype; 
+               // переход к следующему случаю case 
+            case 'object': // объект: проверить наличие соотв. методов
+                for(var m in arg) {   // Для каждого свойства объекта
+                    if (typeof arg[m] !=="function") continue; // Пропустить свойства,
+                    // не являющиеся методами 
+                    if (typeof o[m] !== "function") return false;
+                }
+        }
+    }
+    // Если мы попали сюда, значит, объект o реализует все, что требуется 
+    return true;
+}
+

@@ -1,0 +1,28 @@
+﻿
+
+/*
+ * Эта функция возвращает подкласс указанного класса Set и переопределяет
+ * метод add() этого класса, применяя указанный фильтр.
+ */
+function filteredSetSubclass(superclass, filter) {
+    var constructor = function() {         // Конструктор подкласса
+        superclass.apply(this, arguments); // Вызов конструктора 
+                                           // базового класса
+    };
+    var proto = constructor.prototype = inherit(superclass.prototype);
+    proto.constructor = constructor;
+    proto.add = function() {
+    // Примерить фильтр ко всем аргументам перед добавлением
+        for(var i = 0; i < arguments.length; i++) { var v = arguments[i];
+            if (!filter(v)) throw("значение " + v + " отвергнуто фильтром");
+        }
+    // Вызвать реализацию метода add из базового класса
+        superclass.prototype.add.apply(this, arguments);
+    };
+    return constructor;
+}
+
+
+
+
+
