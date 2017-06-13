@@ -1,0 +1,24 @@
+﻿
+function Range(from, to) {
+    // Не сохраняет границы в свойствах объекта. 
+    // Вместо этого определяет функции доступа, 
+    // возвращающие значения границ. Сами значения хранятся в замыкании. 
+    this.from = function() { return from; };
+    this.to = function() { return to; };
+}
+
+// Методы прототипа не имеют прямого доступа к границам: они должны вызывать 
+// методы доступа, как любые другие функции и методы. 
+Range.prototype = {
+    constructor: Range,
+    includes: function(x) {
+        return this.from() <= x && x <= this.to();
+    },
+    foreach: function(f) {
+        for(var x=Math.ceil(this.from()), max=this.to(); x <= max; x++) f(x);
+    },
+    toString: function() {
+        return "(" + this.from() + "... " + this.to() + ")";
+    }
+};
+

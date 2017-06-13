@@ -1,0 +1,42 @@
+﻿
+var generic = {
+    // Возвращает строку, включающую имя функции-конструктора, если доступно,
+    // и имена и значения всех неунаследованных свойств,
+    // не являющихся функциями.
+    toString: function() {
+        var s = '[';
+    // Если объект имеет конструктор и конструктор имеет имя, использовать
+    // это имя класса как часть возвращаемой строки. Обратите внимание, что
+    // свойство name функций является нестандартным и 
+    //не поддерживается повсеместно.
+        if (this.constructor && this.constructor.name) 
+                     s += this.constructor.name + ": ";
+    // Теперь обойти все неунаследованные свойства, не являющиеся функциями
+        var n = 0;
+        for (var name in this) {
+            if (!this.hasOwnProperty(name)) continue; // пропустить унаслед.
+            var value = this[name];
+            if (typeof value === "function") continue; // пропустить методы
+            if (n++) s += ", ";
+            s += name + '=' + value;
+        }
+        return s + ']';
+    },
+    // Проверить равенство, сравнив конструкторы и свойства экземпляров объектов this
+    // и that. Работает только с классами, свойства экземпляров которых являются
+    // простыми значениями и могут сравниваться с помощью оператора ===.
+    // Игнорировать специальное свойство, добавляемое классом Set.
+    equals: function(that) {
+        if (that == null) return false;
+        if (this.constructor !== that.constructor) return false;
+        for(var name in this) {
+            if (name === "|**objectid**|") continue;  // пропустить спец. св.
+            if (!this.hasOwnProperty(name)) continue; // пропустить унасл. св.
+            if (this[name] !== that[name]) return false; // сравнить значения
+        }
+        return true; // Объекты равны, если все свойства равны.
+    }
+};
+
+
+

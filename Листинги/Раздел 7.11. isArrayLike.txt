@@ -1,0 +1,20 @@
+﻿
+// Определяет, является ли o объектом, подобным массиву. Строки и функции имеют
+// числовое свойство length, но они исключаются проверкой typeof.
+// В клиентском JavaScript текстовые узлы DOM имеют числовое свойство length
+// и, возможно, должны быть исключены дополнительной проверкой o.nodeType != 3.
+function isArrayLike(o) {
+    if (o && // o не null, не undefined и т.д.
+        typeof o === "object" && // o - объект
+        isFinite(o.length) &&    // o.length - конечное число
+        o.length >= 0 &&         // o.length – положительное
+        o.length===Math.floor(o.length) && // o.length – целое
+        o.length < 4294967296)   // o.length < 2^32
+
+        return true; // Значит, объект o подобен массиву
+    else
+        return false; // Иначе - нет
+}
+
+
+
