@@ -1,0 +1,62 @@
+﻿
+Пример 9.21. Класс Range со строго инкапсулированными границами
+// Эта версия класса Range является изменяемой, но она следит за своими
+// границами, обеспечивая выполнение условия from <= to.
+function Range(from, to) {
+    // Проверить соблюдение условия при создании
+    if (from > to) throw new Error("Range: значение from должно быть <= to");
+    // Определение методов доступа, которые следят за соблюдением условия
+    function getFrom() { return from; }
+    function getTo() { return to; }
+    function setFrom(f) { // Не позволяет устанавливать значение from > to
+        if (f <= to) from = f;
+        else throw new Error("Range: значение from должно быть <= to");
+    }
+    function setTo(t) {    // Не позволяет устанавливать значение to < from
+        if (t >= from) to = t;
+        else throw new Error("Range: значение to должно быть >= from");
+    }
+    // Создать перечислимые, ненастраиваемые свойства с методами доступа
+    Object.defineProperties(this, {
+        from: {get:getFrom, 
+               set:setFrom, 
+               enumerable:true, 
+               configurable:false
+              },
+        to:   { get: getTo, 
+                set: setTo, 
+                enumerable:true, 
+                configurable:false
+              }
+    });
+}
+
+// Настройка объекта прототипа осталась такой же, как и в предыдущих примерах.
+// Обращение к методам экземпляров чтения свойств from и to выполняется так,
+// как если бы они были простыми свойствами.
+Range.prototype = hideProps({ 
+    constructor: Range,
+    includes: function(x) { return this.from <= x && x <= this.to; },
+    foreach: function(f) {for(var x=Math.ceil(this.from);x<=this.to;x++) 
+                          f(x);},
+    toString: function() { return "(" + this.from + "... " + this.to + ")"; }
+});
+
+
+/* --------------------------------------------------------------- */
+
+// Делает неперечислимыми указанные (или все) свойства объекта o, 
+// если они доступны для настройки. 
+function hideProps(o) {
+    var props = (arguments.length == 1) // Если один аргумент,
+        ? Object.getOwnPropertyNames(o) // изменить все свойства,
+        : Array.prototype.splice.call(arguments, 1); // иначе только указанные 
+    props.forEach(function(n) { // Скрыть каждое от цикла for/in
+        // Пропустить ненастраиваемые свойства
+        if (!Object.getOwnPropertyDescriptor(o,n).configurable) return;
+        Object.defineProperty(o, n, { enumerable: false });
+    });
+    return o;
+}
+
+
