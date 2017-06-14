@@ -1,0 +1,55 @@
+﻿
+Пример 9.11. Вспомогательные инструменты определения подклассов
+
+// Простая функция для создания простых подклассов
+function defineSubclass(superclass, // Конструктор суперкласса
+                        constructor,// Конструктор нового подкласса
+                        methods, // Методы экземпл.: копируются в прототип
+                        statics) // Свойства класса: копируются в констр-р
+{
+    // Установить объект-прототип подкласса
+    constructor.prototype = inherit(superclass.prototype);
+    constructor.prototype.constructor = constructor;
+    // Скопировать методы methods и statics, как в случае с обычными классами
+    if (methods) extend(constructor.prototype, methods);
+    if (statics) extend(constructor, statics);
+    // Вернуть класс
+    return constructor;
+}
+
+// То же самое можно реализовать в виде метода конструктора суперкласса
+Function.prototype.extend = function(constructor, methods, statics) {
+    return defineSubclass(this, constructor, methods, statics);
+};
+
+
+// inherit() возвращает вновь созданный объект, наследующий свойства
+// объекта-прототипа p. Использует функцию Object.create() из ECMAScript 5,
+// если она определена, иначе используется более старый прием.
+function inherit(p) {
+    if (p == null) throw TypeError(); // p не может быть значением null
+    if (Object.create) // Если Object.create() определена...
+        return Object.create(p); // использовать ее.
+    var t = typeof p; // Иначе выяснить тип и проверить его
+    if (t !== "object" && t !== "function") throw TypeError();
+    function f() {
+    };               // Определить фиктивный конструктор.
+    f.prototype = p; // Записать в его свойство prototype
+                     // ссылку на объект p.
+    return new f();  // Использовать f() для создания
+    // "наследника" объекта p.
+}
+
+
+/*
+ * Копирует перечислимые свойства из объекта p в объект o и возвращает o.
+ * Если o и p имеют свойства с одинаковыми именами, значение свойства
+ * в объекте o затирается значением свойства из объекта p.
+ * Эта функция не учитывает наличие методов доступа и не копирует атрибуты.
+ */
+function extend(o, p) {
+    for(prop in p) {       // Для всех свойств в p.
+        o[prop] = p[prop]; // Добавить свойство в o.
+    }
+    return o;
+}

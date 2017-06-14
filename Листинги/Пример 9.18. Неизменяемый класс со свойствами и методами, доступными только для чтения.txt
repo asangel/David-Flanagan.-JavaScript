@@ -1,0 +1,41 @@
+﻿
+// Эта функция может работать и без ключевого слова 'new': 
+// она одновременно является и конструктором, и фабричной функцией 
+function Range(from,to) {
+    // Дескрипторы свойств from и to, доступных только для чтения.
+    var props = {
+        from: {value:from, 
+               enumerable:true,
+               writable:false,
+               configurable:false},
+        to:   {value:to,
+               enumerable:true,
+               writable:false,
+               configurable:false}
+    };
+    if (this instanceof Range)                // Если вызвана как конструктор
+        Object.defineProperties(this, props); // Определить свойства
+    else // Иначе как фабричная функция
+        return Object.create(Range.prototype, // Создать и вернуть новый
+                             props);          // объект Range со свойствами
+}
+
+// Если добавлять свойства в объект Range.prototype тем же способом, 
+// можно будет определить атрибуты этих свойств. 
+// Поскольку мы не указываем атрибуты enumerable, 
+// writable и configurable, они по умолчанию получают значение false.
+Object.defineProperties(Range.prototype, {
+    includes: {
+        value: function(x) { return this.from <= x && x <= this.to; }
+    },
+    foreach: {
+        value: function(f) {
+            for(var x = Math.ceil(this.from); x <= this.to; x++) f(x);
+        }
+    },
+    toString: {
+        value: function() { return "(" + this.from + "... " + this.to + ")"; }
+    }
+});
+
+
