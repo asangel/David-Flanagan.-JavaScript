@@ -1,0 +1,114 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+
+
+<script>
+
+    var defineCache = Object.create(null);
+    var currentMod = null;
+
+    define(["weekDay.txt", "today.txt"], function (weekDay, today) {
+        console.log(weekDay.name(today.dayNumber()));
+        alert(weekDay.name(today.dayNumber()));
+    });
+
+    function getModule(name) {
+
+        if (name in defineCache)
+            return defineCache[name];
+
+        var module = {
+            exports: null,
+            loaded: false,
+            onLoad: []
+        };
+
+        defineCache[name] = module;
+        backgroundReadFile(name, function (code) {
+            currentMod = module;  // asangel: присваиваем значение
+                                  // глобальной переменной currentMod
+                                  // чтобы можно было получить текущее
+                                  // значение при следующем вызове ф-ции difine().
+                                  // Данная анонимная функция определяется каждый раз
+                                  // при вызове getModule, и она хранит ссылку на
+                                  // объект module, созданный текущим вызовом getModule.
+
+            new Function("", code)(); // asangel: создание и вызов функции, с кодом, который
+                                      // содержит вызов define().
+                                      // Важно: перед вызовом данной функции произойдет
+                                      // переопредеоление глобальной переменной currentMod !!!
+        });
+
+        return module; // asangel помещается в массив deps при вызове Array.map
+
+    } // getModule
+
+    function define(depNames, moduleFunction) {
+
+        var myMod = currentMod;            // закэшируем текущий служебный
+                                           // объект, моделирующий модуль
+
+        var deps = depNames.map(getModule);
+
+        // asangel: обход в цикле служебных объектов модулей,
+        // являющихся зависимостями по отношению к текущему.
+        // Для всех зависимостей в служебное свойство onLoad
+        // добавим ссылку на функцию whenDepsLoaded определенную
+        // в текущем вызове define()
+        deps.forEach(function (mod) {
+            if (!mod.loaded)
+                mod.onLoad.push(whenDepsLoaded); // asangel функция внутри себя будет ссылаться
+                                                 // на переменные текущего вызова define, т.к. она
+                                                 // определяется при каждом вызове define
+
+
+        });
+
+        function whenDepsLoaded() {
+            if (!deps.every(function (m) {
+                        return m.loaded;
+                    }))
+                return;
+
+            // asangel. Если мы здесь, то все зависимости загружены.
+            var args = deps.map(function (m) {
+                return m.exports;
+            });
+            // asangel интерфейсы модуля сохраняем в переменную
+            var exports = moduleFunction.apply(null, args);
+            if (myMod) { // asangel. при первом вызове myMod равна null
+                // обновляем свойства объекта модуля
+                // и вызываем функции из свойства onLoad
+                myMod.exports = exports;
+                myMod.loaded = true;
+                // asangel обход в цикле функций массива onLoad, пока вызов
+                // функции возвращает истинное значение
+                myMod.onLoad.every(function (f) {
+                    f();
+                });
+            }
+        }
+
+        whenDepsLoaded();
+    }
+
+    function backgroundReadFile(url, callback) {
+
+        var req = new XMLHttpRequest();
+        req.open("GET", url, true); // asangel(comment) асинхронный запрос.
+        req.addEventListener("load", function () {
+            if (req.status < 400)
+                callback(req.responseText); // asangel: вызов функции define из callback
+        });
+        req.send(null);
+
+    }
+
+</script>
+
+</body>
+</html>
