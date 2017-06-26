@@ -1,0 +1,56 @@
+﻿
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+
+<script>
+
+    var images = ['IMG/1.png', 'IMG/2.png', 'IMG/3.png', 'IMG/4.png'];
+
+    function getUrl(images) {
+
+        new Promise(function (resolve, reject) {
+
+            var url = images.shift();
+            var img = new Image();
+            img.src = url;
+            if( url==null ) return; // массив пустой !!!
+            img.onload = function () {
+                resolve({img:img, images: images});
+            }
+            img.error = function () {
+                reject(url);
+            }
+
+        }).then(
+                function (args) {
+                    setTimeout(function () {
+                        document.body.appendChild(args.img);
+                        getUrl(args.images);
+
+                    }, 1000); //включим задержку
+
+                }
+        ).catch(
+                function (url) {
+                    alert('Не удалось загрузить картинку ' + url);
+                }
+        )
+
+    }
+
+
+    getUrl(images);
+
+</script>
+
+
+
+
+</body>
+</html>
+
+

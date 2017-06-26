@@ -1,0 +1,116 @@
+﻿<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+
+<script>
+
+    var currentMod = null;
+
+    function define(filenames, modFunction) {
+
+        var thisMod = currentMod;
+
+        var deps = filenames.map(getModule);
+
+
+
+        deps.forEach(function (mod) {
+            mod.onLoad.push(whenDepsLoaded);
+        });
+
+
+
+        function whenDepsLoaded() {
+
+            if(!deps.every(function (mod) { return mod.loaded; })) return;
+
+
+            var args = deps.map(function (mod) {
+                return mod.exports;
+            });
+
+            var exports = modFunction.apply(null, args);
+
+            if(thisMod){
+                //alert(exports);
+                thisMod.exports = exports;
+                thisMod.loaded = true;
+                thisMod.onLoad.forEach(function (f) {
+                    f();
+                })
+            }
+
+        }
+
+        whenDepsLoaded();
+
+    }
+
+    function  getModule(name) {
+
+        var mod = {
+            exports: null,
+            loaded: false,
+            onLoad: [],
+            toString: function () {
+                return 'module:' + name;
+            }
+        }
+
+
+        backgroundReadFile(name, function (code) {
+
+            currentMod = mod;
+            new Function('', code)();
+
+
+        })
+
+        return mod;
+
+    }
+
+
+    function backgroundReadFile(filename, callback) {
+
+        var request = new XMLHttpRequest();
+        request.open('GET', filename, true);
+        request.onload = function () {
+
+            if(200==request.status){
+                var code = request.responseText;
+                callback(code);
+            }
+
+        };
+        request.send(null);
+
+    }
+    
+   define(['today.txt'], function (today) {
+
+       alert( 'Сегодня '  + ( today && today.name && today.name().toLowerCase() ) );
+   });
+    
+</script>
+
+</body>
+</html>
+
+
+/**
+ Файл  today.txt
+ */
+
+//module today.js:
+define([], function () {
+    var names = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"];
+    return {
+        name:      function () { return names[new Date().getDay() - 1]; },
+        dayNumber: function () { return new Date().getDay() - 1; }
+    };
+});
+
