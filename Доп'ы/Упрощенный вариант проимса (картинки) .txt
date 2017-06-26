@@ -17,7 +17,7 @@
             var url = images.shift();
             var img = new Image();
             img.src = url;
-            if( url==null ) return; // массив пустой !!!
+            if( url==null ) return; 
             img.onload = function () {
                 resolve({img:img, images: images});
             }
