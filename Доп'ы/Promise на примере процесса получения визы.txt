@@ -1,0 +1,41 @@
+
+function applyForVisa(documents) {
+    console.log('Обработка заявления .... ')
+    var promise = new Promise(function (resolve, reject) {
+
+        setTimeout(function () {
+            if ( !documents ) {
+                reject();
+            } else {
+                Math.random() > 0.1 ? resolve({
+                    number: 'C3-852-137',
+                    'issue date': '2017/02/23'
+                }) : reject('В визе отказано: недостаточно оснований');
+            }
+        }, 2000)
+
+    });
+
+    return promise;
+}
+
+function getVisa(visa) {
+    console.info('Виза одобрена !');
+    //return visa;
+    return new Promise(function (resolve, reject) {
+        setTimeout( () => resolve(visa), 2000 );
+    });
+
+}
+
+ function bookHotel(visa) {
+     console.info('Бронируем отель....');
+     console.info('Данные визы: ')
+     console.dir(visa);
+     //return {'hotel-name': 'Pansionat', number: 12}
+     // return new Promise( function(resolve, reject){
+     //     //return reject('Не достаточно мест в отеле !')
+     //     return resolve({'hotel-name': 'Pansionat', number: 12});
+     // });
+     return Promise.resolve({'hotel-name': 'Pansionat', number: 12});
+ }
