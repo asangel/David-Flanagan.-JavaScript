@@ -1,5 +1,4 @@
-
-function applyForVisa(documents) {
+﻿function applyForVisa(documents) {
     console.log('Обработка заявления .... ')
     var promise = new Promise(function (resolve, reject) {
 
@@ -39,3 +38,18 @@ function getVisa(visa) {
      // });
      return Promise.resolve({'hotel-name': 'Pansionat', number: 12});
  }
+
+
+function buyTickets(bookingHotel) {
+    console.info('Покупаем билеты...');
+    console.dir(bookingHotel);
+
+}
+
+
+applyForVisa({passport:'FF-000000'}) //return {number: 'C3 852 137', 'issue date': '2017/02/23'}
+    .then(getVisa)
+    .then(bookHotel)
+    .then(buyTickets)
+    .catch(error=>{console.error(error)});
+
