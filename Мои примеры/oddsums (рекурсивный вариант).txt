@@ -1,0 +1,60 @@
+﻿
+var sums = []; // глобальный массив для результатов
+
+function  oddsums(n) {
+
+    switch (n){
+
+        case 1:
+           var summa = n*2-1;
+           sums.push(summa);
+            return summa;
+        default:
+            summa = (n*2-1) + oddsums(n-1);
+            sums.push(summa);
+            return summa;
+    }
+}
+
+oddsums(5);
+console.dir(sums);
+var total = Array.prototype.reduce.call(sums, function (num1, num2) {
+            return num1 + num2;
+})
+
+console.log(total);
+
+//--------------------------------------------------
+// вариант для nodeJS
+// 
+
+ module.exports = function () {
+
+    var sums = [];
+
+    function oddsums(n) {
+
+        switch (n){
+
+            case 1:
+                var sum = 2*n-1;
+                sums.push(sum);
+                oddsums.total +=sum;
+                return sum;
+            default:
+                sum = (2*n-1) + oddsums(n-1);
+                sums.push(sum);
+                oddsums.total += sum;
+                return sum;
+        }
+    }
+     
+     oddsums.total=0;
+     
+     oddsums.getSums = function () {
+         return sums;
+     }
+     
+     return oddsums;
+
+}();
