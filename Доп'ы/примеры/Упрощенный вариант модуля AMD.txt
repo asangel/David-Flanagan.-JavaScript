@@ -112,3 +112,24 @@
 
 </body>
 </html>
+
+
+////////////////////////////////////////////////////////////////////////
+
+содержимое модуля (файла) today.txt
+/**
+ * Created by User on 20.06.2017.
+ */
+
+define([], function () {
+    var names = ["Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота", "Воскресенье"];
+    return {
+        name: function () { return names[new Date().getDay() - 1]; },
+        dayNumber: function () { return new Date().getDay()-1; }
+    };
+});
+
+
+
+
+
