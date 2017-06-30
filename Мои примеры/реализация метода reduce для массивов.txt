@@ -50,7 +50,6 @@ var reduce  = function (array, callback, initialize) {
         var index;
         for(index=0, length=array.length; index<length; index++){
             if(index in array){
-                //console.log('first value: ' + array[index])
                 accumulator = array[index];
                 index++;
                 break;
@@ -61,10 +60,8 @@ var reduce  = function (array, callback, initialize) {
 
     }
 
-   // console.log(index)
+
     for( ; index<array.length; index++){
-        //console.dir(array[index])
-        //console.dir(index)
         accumulator = callback.call(null, accumulator, array[index]);
     }
 
