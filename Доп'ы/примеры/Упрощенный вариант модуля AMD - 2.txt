@@ -1,0 +1,140 @@
+﻿<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+<body>
+
+<script src="module_amd/module.js"></script>
+
+<script>
+
+
+    //alert(getModule("module_amd/weekDay.txt"));
+
+    define(['module_amd/today.txt'], function (today) {
+        alert(today.name())
+
+    });
+
+
+
+</script>
+
+
+</body>
+</html>
+
+////////////   МОДУЛИ  /////////////////
+файл module_amd/module.js
+
+var currentModule;
+
+function getModule(filename) {
+
+    var module = {
+        exports: null,
+        loaded: false,
+        onLoad: [],
+        toString: function () {
+            return 'module: ' + filename;
+        }
+
+    }
+
+    backgroundReadFile(filename, function (code) {
+        currentModule=module;
+        new Function('', code)();
+
+    })
+
+    return module;
+}
+
+function backgroundReadFile(filename, callback) {
+    
+    var request = new XMLHttpRequest();
+    request.open('GET', filename, true);
+    request.onload = function () {
+
+        if(200 == request.status){
+            var code = request.responseText;
+            callback(code);
+
+        }else{
+            throw  new Error('Ошибка загрузки модуля');
+        }
+    }
+    request.send(null);
+
+}
+
+function define(filenames, mod_function) {
+
+    var thisMod = currentModule;
+
+    var dependens = filenames.map(getModule);
+    dependens.forEach(function (m) {
+        if(!m.loaded) m.onLoad.push(whenDepsLoaded);
+    })
+
+    function whenDepsLoaded() {
+
+       if(!dependens.every(function (mod) { return mod.loaded; }))  return;
+
+        var args = dependens.map(function (m) {
+            return m.exports;
+        });
+
+        var exports = mod_function.apply(null, args);
+
+        if(thisMod){
+            thisMod.exports = exports;
+            thisMod.loaded=true;
+            thisMod.onLoad.forEach(function (f) {
+                f();
+            })
+
+        }
+
+
+    }
+
+    whenDepsLoaded();
+
+}
+
+
+
+//////////////////////////////////////////////////////////////
+
+файл module_amd/today.txt
+
+define(['/module_amd/weekDay.txt'] , function(weekDay){
+    var names = ['понедельник', "вторник", "среда", "четверг", "пятница", "суббота", "воскресенье"];
+    return {
+        name: function () {
+        //alert(1111);
+           return names[weekDay.day()];
+        }
+    }
+});
+
+
+файл module_amd/weekDay.txt
+
+define([], function () {
+        return {
+            day: function () { return new Date().getDay(); }
+        }
+    }
+);
+
+
+
+
+
+
+
+
+
