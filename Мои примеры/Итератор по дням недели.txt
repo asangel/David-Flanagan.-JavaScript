@@ -1,0 +1,70 @@
+﻿var daysOfTheWeek = function () {
+
+    var days = {'1':'Sanday', '2':'Monday', '3':'Tuesday', '4':'Wenesday',
+                '5':'Thursday', '6':"Friday", '7':'Saturday'};
+    var length = 7;
+
+     var nextDay = 1;
+     return{
+         next: function () {
+             if(nextDay>length) nextDay=1; //reset
+             return days[nextDay++];
+         }
+     }
+
+}
+
+var calendar = daysOfTheWeek();
+console.log( calendar.next() );
+console.log( calendar.next() );
+console.log( calendar.next() );
+console.log( calendar.next() );
+console.log( calendar.next() );
+console.log( calendar.next() );
+console.log( calendar.next() );
+console.log( calendar.next() );
+console.log( calendar.next() );
+
+
+/*------------------ еще пример ----------------*/
+
+var calendar = {
+    days: {1:"Понедельник", 2:"Вторник", 3:"Среда",
+        4:"Четверг", 5:"Пятница", 6:"Суббота", 7:"Воскресенье"},
+    __iterator__: function () {
+        var nextDay = 1;
+        var self=this; //
+        return {
+            next: function () {
+
+                try {
+                    if(nextDay>7) throw false;
+                    return self.days[nextDay++];
+                } catch (e){
+                    if(false===e){
+
+                        nextDay=1;
+                        return self.days[nextDay++];
+                    }else{
+                        throw e;
+                    }
+                }
+
+            }
+        }
+    }
+}
+
+
+var iteratorOdDays = calendar.__iterator__();
+
+console.log(iteratorOdDays.next());
+console.log(iteratorOdDays.next());
+console.log(iteratorOdDays.next());
+console.log(iteratorOdDays.next());
+console.log(iteratorOdDays.next());
+console.log(iteratorOdDays.next());
+console.log(iteratorOdDays.next());
+console.log(iteratorOdDays.next());
+console.log(iteratorOdDays.next());
+console.log(iteratorOdDays.next());
