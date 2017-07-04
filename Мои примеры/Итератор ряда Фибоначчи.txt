@@ -1,0 +1,16 @@
+﻿function fibonachi() {
+
+    let a=b=1;
+
+    return { next: function () {
+        let c = a+b;
+        a=b; b=c;
+        return c;
+    } };
+
+
+}
+
+var fib = fibonachi();
+for(let i=3; i<=10; i++) console.log('Число ' + i + ' ряда Фибоначчи = '+ f.next());
+
